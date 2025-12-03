@@ -21,6 +21,8 @@ bare_web_kit_gtk_exports(js_env_t *env, js_value_t *exports) {
   }
 
   V("webViewInit", bare_web_kit_gtk_web_view_init)
+  V("webViewLoadURI", bare_web_kit_gtk_web_view_load_uri)
+  V("webViewLoadHTML", bare_web_kit_gtk_web_view_load_html)
 #undef V
 
 #define V(name, n) \
