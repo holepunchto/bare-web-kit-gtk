@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/holepunchto/bare-web-kit-gtk#readme",
   "dependencies": {
-    "bare-gtk": "^0.0.0",
+    "bare-gtk": "^0.1.0",
     "require-asset": "^1.1.0"
   },
   "devDependencies": {
