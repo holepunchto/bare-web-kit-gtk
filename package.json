@@ -1,6 +1,6 @@
 {
   "name": "bare-web-kit-gtk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "WebKitGTK bindings for Bare",
   "exports": {
     "./package": "./package.json",
