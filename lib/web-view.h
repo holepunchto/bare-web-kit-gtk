@@ -79,6 +79,39 @@ bare_web_kit_gtk_web_view_init(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
+bare_web_kit_gtk_web_view_inspectable(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  BareWebView *web_view;
+  err = js_get_value_external(env, argv[0], (void **) &web_view);
+  assert(err == 0);
+
+  WebKitSettings *settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view));
+  js_value_t *result = NULL;
+
+  if (argc == 1) {
+    err = js_get_boolean(env, webkit_settings_get_enable_developer_extras(settings), &result);
+    assert(err == 0);
+  } else {
+    bool enabled;
+    err = js_get_value_bool(env, argv[1], &enabled);
+    assert(err == 0);
+
+    webkit_settings_set_enable_developer_extras(settings, enabled);
+  }
+
+  return result;
+}
+
+static js_value_t *
 bare_web_kit_gtk_web_view_load_uri(js_env_t *env, js_callback_info_t *info) {
   int err;
 
