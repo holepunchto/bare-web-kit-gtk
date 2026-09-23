@@ -22,11 +22,11 @@ bare_web_kit_gtk_exports(js_env_t *env, js_value_t *exports) {
     assert(err == 0); \
   }
 
-  V("claim", bare_gobject_registry_claim)
-  V("wrapper", bare_gobject_registry_wrapper)
+  V("claim", bare_gobject_claim)
+  V("wrapper", bare_gobject_wrapper)
   V("registrySize", bare_gobject_registry_size)
-  V("handle", bare_gobject_registry_handle)
-  V("adopt", bare_gobject_registry_adopt)
+  V("handle", bare_gobject_handle)
+  V("adopt", bare_gobject_adopt)
 
   V("webViewInit", bare_web_kit_gtk_web_view_init)
   V("webViewLoadURI", bare_web_kit_gtk_web_view_load_uri)

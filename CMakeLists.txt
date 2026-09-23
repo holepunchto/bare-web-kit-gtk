@@ -28,6 +28,12 @@ target_sources(
     binding.c
 )
 
+target_include_directories(
+  ${bare_web_kit_gtk}
+  PRIVATE
+    node_modules/bare-gobject-registry/lib
+)
+
 target_link_libraries(
   ${bare_web_kit_gtk}
   PUBLIC
