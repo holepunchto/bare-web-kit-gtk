@@ -1,81 +1,25 @@
+#ifndef BARE_WEB_KIT_GTK_WEB_VIEW_H
+#define BARE_WEB_KIT_GTK_WEB_VIEW_H
+
 #include <assert.h>
-#include <bare.h>
 #include <js.h>
-#include <stdlib.h>
 
 #include <webkit/webkit.h>
 
-typedef struct {
-  WebKitWebView handle;
-
-  js_env_t *env;
-  js_ref_t *ctx;
-} BareWebView;
-
-typedef struct {
-  WebKitWebViewClass parent;
-} BareWebViewClass;
-
-G_DEFINE_TYPE(BareWebView, bare_web_view, WEBKIT_TYPE_WEB_VIEW)
-
-static void
-bare_web_view_init(BareWebView *self) {}
-
-BareWebView *
-bare_web_view_new(void) {
-  return g_object_new(bare_web_view_get_type(), NULL);
-}
-
-static void
-bare_web_view_finalize(GObject *object) {
-  int err;
-
-  BareWebView *self = (BareWebView *) object;
-
-  js_env_t *env = self->env;
-
-  err = js_delete_reference(env, self->ctx);
-  assert(err == 0);
-
-  G_OBJECT_CLASS(bare_web_view_parent_class)->finalize(object);
-}
-
-static void
-bare_web_view_class_init(BareWebViewClass *class) {
-  GObjectClass *object_class = G_OBJECT_CLASS(class);
-
-  object_class->finalize = bare_web_view_finalize;
-}
-
-static void
-bare_web_view__on_release(js_env_t *env, void *data, void *finalize_hint) {
-  g_object_unref(data);
-}
+#include "bridging.h"
+#include "registry.h"
 
 static js_value_t *
 bare_web_kit_gtk_web_view_init(js_env_t *env, js_callback_info_t *info) {
   int err;
 
-  size_t argc = 1;
-  js_value_t *argv[1];
+  GtkWidget *web_view = webkit_web_view_new();
 
-  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  js_value_t *result;
+  err = js_create_uint32(env, bare_gobject__tag(web_view), &result);
   assert(err == 0);
 
-  assert(argc == 1);
-
-  BareWebView *web_view = bare_web_view_new();
-
-  web_view->env = env;
-
-  err = js_create_reference(env, argv[0], 1, &web_view->ctx);
-  assert(err == 0);
-
-  js_value_t *handle;
-  err = js_create_external(env, web_view, bare_web_view__on_release, NULL, &handle);
-  assert(err == 0);
-
-  return handle;
+  return result;
 }
 
 static js_value_t *
@@ -90,23 +34,17 @@ bare_web_kit_gtk_web_view_load_uri(js_env_t *env, js_callback_info_t *info) {
 
   assert(argc == 2);
 
-  BareWebView *web_view;
-  err = js_get_value_external(env, argv[0], (void **) &web_view);
-  assert(err == 0);
+  WebKitWebView *web_view;
+  err = bare_gobject__read_tag(env, argv[0], "webView", (gpointer *) &web_view);
+  if (err < 0) return NULL;
 
-  size_t uri_len;
-  err = js_get_value_string_utf8(env, argv[1], NULL, 0, &uri_len);
-  assert(err == 0);
+  char *uri;
+  err = bare_web_kit_gtk__read_string(env, argv[1], "uri", &uri);
+  if (err < 0) return NULL;
 
-  uri_len += 1 /* NULL */;
+  webkit_web_view_load_uri(web_view, uri);
 
-  utf8_t *uri = malloc(uri_len);
-  err = js_get_value_string_utf8(env, argv[1], uri, uri_len, NULL);
-  assert(err == 0);
-
-  webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), (gchar *) uri);
-
-  free(uri);
+  g_free(uri);
 
   return NULL;
 }
@@ -123,34 +61,28 @@ bare_web_kit_gtk_web_view_load_html(js_env_t *env, js_callback_info_t *info) {
 
   assert(argc == 3);
 
-  BareWebView *web_view;
-  err = js_get_value_external(env, argv[0], (void **) &web_view);
-  assert(err == 0);
+  WebKitWebView *web_view;
+  err = bare_gobject__read_tag(env, argv[0], "webView", (gpointer *) &web_view);
+  if (err < 0) return NULL;
 
-  size_t html_len;
-  err = js_get_value_string_utf8(env, argv[1], NULL, 0, &html_len);
-  assert(err == 0);
+  char *html;
+  err = bare_web_kit_gtk__read_string(env, argv[1], "html", &html);
+  if (err < 0) return NULL;
 
-  html_len += 1 /* NULL */;
+  char *base_uri;
+  err = bare_web_kit_gtk__read_string(env, argv[2], "baseURI", &base_uri);
+  if (err < 0) {
+    g_free(html);
 
-  utf8_t *html = malloc(html_len);
-  err = js_get_value_string_utf8(env, argv[1], html, html_len, NULL);
-  assert(err == 0);
+    return NULL;
+  }
 
-  size_t base_uri_len;
-  err = js_get_value_string_utf8(env, argv[2], NULL, 0, &base_uri_len);
-  assert(err == 0);
+  webkit_web_view_load_html(web_view, html, base_uri);
 
-  base_uri_len += 1 /* NULL */;
-
-  utf8_t *base_uri = malloc(base_uri_len);
-  err = js_get_value_string_utf8(env, argv[2], base_uri, base_uri_len, NULL);
-  assert(err == 0);
-
-  webkit_web_view_load_html(WEBKIT_WEB_VIEW(web_view), (gchar *) html, (gchar *) base_uri);
-
-  free(html);
-  free(base_uri);
+  g_free(html);
+  g_free(base_uri);
 
   return NULL;
 }
+
+#endif // BARE_WEB_KIT_GTK_WEB_VIEW_H

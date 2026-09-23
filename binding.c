@@ -5,6 +5,8 @@
 
 #include <webkit/webkit.h>
 
+#include "lib/bridging.h"
+#include "lib/registry.h"
 #include "lib/web-view.h"
 
 static js_value_t *
@@ -19,6 +21,12 @@ bare_web_kit_gtk_exports(js_env_t *env, js_value_t *exports) {
     err = js_set_named_property(env, exports, name, val); \
     assert(err == 0); \
   }
+
+  V("claim", bare_gobject_registry_claim)
+  V("wrapper", bare_gobject_registry_wrapper)
+  V("registrySize", bare_gobject_registry_size)
+  V("handle", bare_gobject_registry_handle)
+  V("adopt", bare_gobject_registry_adopt)
 
   V("webViewInit", bare_web_kit_gtk_web_view_init)
   V("webViewLoadURI", bare_web_kit_gtk_web_view_load_uri)
