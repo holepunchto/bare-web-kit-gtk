@@ -6,7 +6,6 @@
 #include <webkit/webkit.h>
 
 #include "lib/bridging.h"
-#include "lib/registry.h"
 #include "lib/web-view.h"
 
 static js_value_t *
