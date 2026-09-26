@@ -4,7 +4,8 @@
   "description": "WebKitGTK bindings for Bare",
   "exports": {
     "./package": "./package.json",
-    ".": "./index.js"
+    ".": "./index.js",
+    "./*": "./lib/*.js"
   },
   "files": [
     "index.js",
