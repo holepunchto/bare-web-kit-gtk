@@ -4,10 +4,18 @@
   "description": "WebKitGTK bindings for Bare",
   "exports": {
     "./package": "./package.json",
-    ".": "./index.js"
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./*": {
+      "types": "./lib/*.d.ts",
+      "default": "./lib/*.js"
+    }
   },
   "files": [
     "index.js",
+    "index.d.ts",
     "binding.c",
     "binding.js",
     "CMakeLists.txt",
@@ -31,7 +39,8 @@
   },
   "homepage": "https://github.com/holepunchto/bare-web-kit-gtk#readme",
   "dependencies": {
-    "bare-gtk": "^0.2.0",
+    "bare-gobject-registry": "^0.1.0",
+    "bare-gtk": "^0.3.0",
     "require-asset": "^1.1.0"
   },
   "devDependencies": {
