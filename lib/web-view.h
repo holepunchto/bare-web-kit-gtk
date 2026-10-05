@@ -91,4 +91,28 @@ bare_web_kit_gtk_web_view_load_html(js_env_t *env, js_callback_info_t *info) {
   return NULL;
 }
 
+static js_value_t *
+bare_web_kit_gtk_web_view_settings(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  bare_gobject_registry_t *registry;
+  err = js_get_callback_info(env, info, &argc, argv, NULL, (void **) &registry);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  WebKitWebView *web_view;
+  err = bare_gobject_read_tag(env, registry, argv[0], "webView", (gpointer *) &web_view);
+  if (err < 0) return NULL;
+
+  js_value_t *result;
+  err = js_create_uint32(env, bare_gobject_tag(registry, webkit_web_view_get_settings(web_view)), &result);
+  assert(err == 0);
+
+  return result;
+}
+
 #endif // BARE_WEB_KIT_GTK_WEB_VIEW_H

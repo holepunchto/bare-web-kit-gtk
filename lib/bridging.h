@@ -36,4 +36,25 @@ bare_web_kit_gtk__read_string(js_env_t *env, js_value_t *value, const char *name
   return 0;
 }
 
+static int
+bare_web_kit_gtk__read_bool(js_env_t *env, js_value_t *value, const char *name, bool *result) {
+  int err;
+
+  bool is;
+  err = js_is_boolean(env, value, &is);
+  assert(err == 0);
+
+  if (!is) {
+    err = js_throw_type_errorf(env, NULL, "Expected '%s' to be a boolean", name);
+    assert(err == 0);
+
+    return -1;
+  }
+
+  err = js_get_value_bool(env, value, result);
+  assert(err == 0);
+
+  return 0;
+}
+
 #endif // BARE_WEB_KIT_GTK_BRIDGING_H

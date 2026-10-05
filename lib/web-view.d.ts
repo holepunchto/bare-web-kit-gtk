@@ -1,7 +1,10 @@
 import GTKWidget = require('bare-gtk/widget')
+import WebKitGTKSettings = require('./settings')
 
 /** A widget that shows web content with WebKitGTK, as a `WebKitWebView`. */
 interface WebKitGTKWebView extends GTKWidget {
+  readonly settings: WebKitGTKSettings
+
   /** Load `uri`. */
   loadURI(uri: string): this
 

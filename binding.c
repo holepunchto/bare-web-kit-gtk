@@ -6,6 +6,7 @@
 #include <webkit/webkit.h>
 
 #include "lib/bridging.h"
+#include "lib/settings.h"
 #include "lib/web-view.h"
 
 static js_value_t *
@@ -32,6 +33,9 @@ bare_web_kit_gtk_exports(js_env_t *env, js_value_t *exports) {
   V("webViewInit", bare_web_kit_gtk_web_view_init)
   V("webViewLoadURI", bare_web_kit_gtk_web_view_load_uri)
   V("webViewLoadHTML", bare_web_kit_gtk_web_view_load_html)
+  V("webViewSettings", bare_web_kit_gtk_web_view_settings)
+
+  V("settingsEnableDeveloperExtras", bare_web_kit_gtk_settings_enable_developer_extras)
 #undef V
 
 #define V(name, n) \
