@@ -5,6 +5,7 @@
 #include <glib.h>
 #include <js.h>
 #include <stdbool.h>
+#include <string.h>
 #include <utf.h>
 
 static int
@@ -30,6 +31,15 @@ bare_web_kit_gtk__read_string(js_env_t *env, js_value_t *value, const char *name
 
   err = js_get_value_string_utf8(env, value, (utf8_t *) str, len + 1, NULL);
   assert(err == 0);
+
+  if (strlen(str) != len) {
+    g_free(str);
+
+    err = js_throw_type_errorf(env, NULL, "Expected '%s' to not contain null bytes", name);
+    assert(err == 0);
+
+    return -1;
+  }
 
   *result = str;
 
